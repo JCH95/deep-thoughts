@@ -1,0 +1,40 @@
+query getSingleUser($username: String!) {
+  user(username: $username) {
+    username
+    friendCount
+    thoughts {
+      thoughtText
+      createdAt
+    }
+    friends {
+      username
+    }
+  }
+}
+
+query {
+  # query all thoughts
+  thoughts {
+    _id
+    username
+    thoughtText
+    reactions {
+      _id
+      createdAt
+      username
+      reactionBody
+    }
+  }
+
+  # query a single thought, use the `_id` value of a thought that returned from a previous query
+  thought(_id: "61faaecdc7542d9dfe1136b5") {
+    _id
+    username
+    thoughtText
+    createdAt
+    reactions {
+      username
+      reactionBody
+    }
+  }
+}
