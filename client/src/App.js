@@ -13,6 +13,25 @@ import SingleThought from './pages/SingleThought';
 import Profile from './pages/Profile';
 import Signup from './pages/Signup';
 
+const httpLink = createHttpLink({
+  uri: '/graphql',
+});
+
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('id_token');
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
+
 function App() {
   return (
     <ApolloProvider client={client}>
@@ -33,17 +52,14 @@ function App() {
                 path="/signup"
                 element={<Signup />}
               />
-              <Routes>
-                <Route
-                  path="/profile/:username?"
-                  element={<Profile />}
-                />
-                <Route
-                  path="/thought/:id"
-                  element={<SingleThought />}
-                />
-              </Routes>
-
+              <Route
+                path="/profile"
+                element={<Profile />}
+              />
+              <Route
+                path="/thought/:id"
+                element={<SingleThought />}
+              />
               <Route
                 path="*"
                 element={<NoMatch />}
@@ -56,24 +72,5 @@ function App() {
     </ApolloProvider>
   );
 }
-
-const httpLink = createHttpLink({
-  uri: '/graphql',
-});
-
-const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('id_token');
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  };
-});
-
-const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-});
 
 export default App;
